@@ -212,18 +212,17 @@ CALL apoc.create.relationship(source, relType, {
 }, target) YIELD rel
 RETURN count(rel);
 
-// 基于数据创建分类节点
+// 基于数据创建分类节点（支持多重分类）
 RETURN 'Creating category nodes from data';
 
-// 为每个唯一的category创建分类节点
+// 处理多重分类：按逗号分割并创建分类节点
 MATCH (n)
 WHERE n.category IS NOT NULL AND n.category <> ''
-WITH DISTINCT n.category as categoryName
-MERGE (cat:Category {name: categoryName});
-
-// 连接实体到分类
-MATCH (n), (cat:Category)
-WHERE n.category = cat.name
+WITH n, split(n.category, ',') as categoryList
+UNWIND categoryList as categoryName
+WITH n, trim(categoryName) as cleanCategoryName
+WHERE cleanCategoryName <> ''
+MERGE (cat:Category {name: cleanCategoryName})
 MERGE (n)-[:BELONGS_TO_CATEGORY]->(cat);
 
 // 为每个唯一的conceptType创建概念类型节点
@@ -363,9 +362,8 @@ OPTIONAL MATCH (r)-[:CONTAINS_STEP]->(s:CookingStep)
 WITH r, count(s) as stepCount
 SET r.stepCount = stepCount;
 
-RETURN '知识图谱构建完成！';
+RETURN 'Knowledge graph construction completed!';
 
-// 显示最终统计
 MATCH (n)
-RETURN labels(n) as 节点类型, count(n) as 数量
-ORDER BY 数量 DESC;
+RETURN labels(n) as NodeType, count(n) as Count
+ORDER BY Count DESC;
