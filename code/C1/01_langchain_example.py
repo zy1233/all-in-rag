@@ -47,10 +47,11 @@ prompt = ChatPromptTemplate.from_template("""请根据下面提供的上下文�
 
 # 配置大语言模型
 llm = ChatDeepSeek(
-    model="deepseek-chat",
+    model="deepseek-ai/DeepSeek-V3",
     temperature=0.7,
     max_tokens=2048,
-    api_key=os.getenv("DEEPSEEK_API_KEY")
+    api_key=os.getenv("DEEPSEEK_API_KEY"),
+    api_base="https://api.siliconflow.cn/v1"
 )
 
 # 用户查询
