@@ -21,10 +21,12 @@ print(f"已定义 {len(route_names)} 个路由: {', '.join(route_names)}")
 
 # 2. 定义不同路由的目标链
 llm = ChatDeepSeek(
-    model="deepseek-chat", 
-    temperature=0, 
-    api_key=os.getenv("DEEPSEEK_API_KEY")
-    )
+    model="deepseek-ai/DeepSeek-V3",
+    temperature=0,
+    max_tokens=2048,
+    api_key=os.getenv("DEEPSEEK_API_KEY"),
+    api_base="https://api.siliconflow.cn/v1"
+)
 
 # 定义川菜和粤菜处理链
 sichuan_chain = (
@@ -69,7 +71,9 @@ full_chain = RunnableLambda(route)
 demo_queries = [
     "水煮鱼怎么做才嫩？",        # 应该路由到川菜
     "如何做一碗清淡的云吞面？",    # 应该路由到粤菜
-    "麻婆豆腐的核心调料是什么？",  # 应该路由到川菜
+    #"麻婆豆腐的核心调料是什么？",  # 应该路由到川菜
+    #"番茄炒蛋需要放糖吗？" ,     
+    "如何部署python程序"      # 应该路由到其他
 ]
 
 for i, query in enumerate(demo_queries, 1):

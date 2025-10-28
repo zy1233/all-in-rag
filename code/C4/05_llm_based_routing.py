@@ -4,11 +4,14 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_deepseek import ChatDeepSeek
 from langchain_core.runnables import RunnableBranch
 
+# 配置大语言模型
 llm = ChatDeepSeek(
-    model="deepseek-chat", 
-    temperature=0, 
-    api_key=os.getenv("DEEPSEEK_API_KEY")
-    )
+    model="deepseek-ai/DeepSeek-V3",
+    temperature=0.7,
+    max_tokens=2048,
+    api_key=os.getenv("DEEPSEEK_API_KEY"),
+    api_base="https://api.siliconflow.cn/v1"
+)
 
 # 1. 设置不同菜系的处理链
 sichuan_prompt = ChatPromptTemplate.from_template(
@@ -52,7 +55,8 @@ print("完整的路由链创建成功。\n")
 demo_questions = [
     {"question": "麻婆豆腐怎么做？"},      # 应该路由到川菜
     {"question": "白切鸡的正宗做法是什么？"}, # 应该路由到粤菜
-    {"question": "番茄炒蛋需要放糖吗？"}      # 应该路由到其他
+    {"question": "番茄炒蛋需要放糖吗？"} ,     # 应该路由到其他
+    {"question": "如何部署python程序"}      # 应该路由到其他
 ]
 
 for i, item in enumerate(demo_questions, 1):
